@@ -3,28 +3,25 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.File;
 import java.io.IOException;
+import java.util.LinkedList;
 import java.util.Scanner;
 import java.util.StringTokenizer;
-
 import javax.imageio.ImageIO;
 
 
 public class firstBPM {
 	static int width, height;
-	static int left = 3;
-	static int mid = 1;
-	static int right = 3;
+	static int left = 4;
+	static int mid = 0;
+	static int right = 2;
+	
 	
 	public static void main(String args[]) throws IOException { 
+		LinkedList<Integer> ListX = new LinkedList<Integer>();
+		LinkedList<Integer> ListY = new LinkedList<Integer>();
+		LinkedList<String> ListD = new LinkedList<String>();
 		int[][] array = seeBMPImage("/resources/complexRoom.ppm");
-		//print out array, comment out later
-		for (int i = 0; i < height; i++){
-			for(int j= 0; j< width; j++){
-				System.out.print(array[i][j] + " ");
-			}
-			System.out.println();
-		}
-		//Code for how to compute two rooms, separated by 1 wall, as of 2/3/14
+		//Code for how to location in any 2D building as of 2/3/14
 		for (int i = 0; i < height; i++){
 			for(int j= 0; j< width; j++){
 				if(array[i][j] == 0){
@@ -37,49 +34,69 @@ public class firstBPM {
 						if(array[a][j] == 0){
 							countU++;
 						}
-						else{
-							break;
-						}
+						else break;
 					}
 					for(int a = j+1; a < width; a++){
 						if(array[i][a] == 0){
 							countR++;
 						}
-						else{
-							break;
-						}
+						else break;
 					}
 					for(int a = i+1; a < height; a++){
 						if(array[a][j] == 0){
 							countD++;
 						}
-						else{
-							break;
-						}
+						else break;
 					}
 					for(int a = j-1; a >= 0; a--){
 						if(array[i][a] == 0){
 							countL++;
 						}
-						else{
-							break;
-						}
+						else break;
 					}
 					//System.out.println(" " +countU+" "+countR+" "+countD+" "+countL+" ");
 					if(countU == left && countR == mid && countD == right){
+						ListX.add(i);
+						ListY.add(j);
+						ListD.add("R");
 						System.out.println("("+i+ ", " + j+") facing Right");
 					}
 					if(countR == left && countD == mid && countL == right){
+						ListX.add(i);
+						ListY.add(j);
+						ListD.add("D");
 						System.out.println("("+i+ ", " + j+") facing Down");
 					}
 					if(countD == left && countL == mid && countU == right){
+						ListX.add(i);
+						ListY.add(j);
+						ListD.add("L");
 						System.out.println("("+i+ ", " + j+") facing Left");
 					}
 					if(countL == left && countU == mid && countR == right){
+						ListX.add(i);
+						ListY.add(j);
+						ListD.add("U");
 						System.out.println("("+i+ ", " + j+") facing Up");
 					}
 				}
 			}
+		}
+		int iterateList = 0;
+		for (int i = 0; i < height; i++){
+			for(int j= 0; j< width; j++){
+				if(ListX.size() > iterateList && i == ListX.get(iterateList) && j == ListY.get(iterateList)){
+					String printBold = (char)27 +"[1m testing bold";
+					//String printBold = "\033[1m0 \033[0m";
+					System.out.print(printBold);
+					iterateList ++;
+				}
+				else{
+					System.out.print(array[i][j] + " ");
+				}
+			}
+			System.out.println();
+
 		}
 		
 		//Code for how to compute a single room, as of 2/3/14
@@ -106,7 +123,7 @@ public class firstBPM {
 	public static int[][] seeBMPImage(String BMPFileName) throws IOException {
 		System.out.println(firstBPM.class.getResource(BMPFileName).toString());
 		//BufferedReader br = new BufferedReader(new FileReader(firstBPM.class.getResource(BMPFileName).toString()));
-		BufferedReader br = new BufferedReader(new FileReader("C:/cygwin64/home/Mingsheng/development/quadslam/src/resources/complexRoom.ppm"));
+		BufferedReader br = new BufferedReader(new FileReader("/Users/andrewpl/Documents/workspace/Capstone/src/resources/complexRoom.ppm"));
 		String currentline;		
 		currentline = br.readLine();
 		currentline = br.readLine();
